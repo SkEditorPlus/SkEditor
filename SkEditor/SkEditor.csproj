@@ -166,6 +166,9 @@
 		<Compile Update="Controls\Sidebar\ParserSidebarPanel.axaml.cs">
 			<DependentUpon>ParserSidebarPanel.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Settings\ParserPage.axaml.cs">
+		  <DependentUpon>ParserPage.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>

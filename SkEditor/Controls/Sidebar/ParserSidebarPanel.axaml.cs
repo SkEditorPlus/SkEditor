@@ -1,42 +1,33 @@
-﻿using Avalonia.Controls;
-using FluentAvalonia.UI.Controls;
-using SkEditor.API;
-using SkEditor.Utilities;
-using SkEditor.Utilities.Parser;
-using SkEditor.Utilities.Parser.ViewModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Controls;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
+using CommunityToolkit.Mvvm.Input;
+using FluentAvalonia.UI.Controls;
+using SkEditor.API;
+using SkEditor.Parser;
+using SkEditor.Parser.Elements;
+using SkEditor.Utilities;
+using SkEditor.Utilities.InternalAPI;
+using SkEditor.Utilities.Styling;
 
 namespace SkEditor.Controls.Sidebar;
 
 public partial class ParserSidebarPanel : UserControl
 {
     public static bool CodeParserEnabled => SkEditorAPI.Core.GetAppConfig().EnableCodeParser;
-    public ObservableCollection<CodeSection> Sections { get; set; } = [];
+    public ObservableCollection<SectionNode> Nodes { get; set; } = [];
+    public FileParser Parser => SkEditorAPI.Files.GetCurrentOpenedFile()["Parser"] as FileParser;
 
-    public void Refresh(List<CodeSection> sections)
+    public void Refresh(List<SectionNode> nodes)
     {
-        Sections.Clear();
-        sections.ForEach(Sections.Add);
+        Nodes.Clear();
+        nodes.ForEach(Nodes.Add);
 
-        var viewModel = (ParserFilterViewModel)DataContext;
-        var filteredSections = Sections
-            .Where(section => string.IsNullOrWhiteSpace(viewModel.SearchText) || section.Name.Contains(viewModel.SearchText))
-            .ToList();
-        if (viewModel.SelectedFilterIndex != 0)
-        {
-            var type = viewModel.SelectedFilterIndex switch
-            {
-                1 => CodeSection.SectionType.Function,
-                2 => CodeSection.SectionType.Event,
-                3 => CodeSection.SectionType.Options,
-                4 => CodeSection.SectionType.Command,
-                _ => throw new System.NotImplementedException()
-            };
-            filteredSections = filteredSections.Where(section => section.Type == type).ToList();
-        }
-        ItemsRepeater.ItemsSource = filteredSections;
+        var viewModel = (ParserFilterViewModel) DataContext;
+        viewModel.AllSections = new ObservableCollection<Node>(nodes);
 
         UpdateInformationBox();
     }
@@ -76,7 +67,7 @@ public partial class ParserSidebarPanel : UserControl
 
     public void ParseCurrentFile()
     {
-        var parser = SkEditorAPI.Files.GetCurrentOpenedFile().Parser;
+        var parser = SkEditorAPI.Files.GetCurrentOpenedFile()["Parser"] as FileParser;
         if (parser == null)
             return;
 
@@ -86,7 +77,7 @@ public partial class ParserSidebarPanel : UserControl
 
     public void UpdateSearchFilter()
     {
-        Refresh([.. Sections]);
+        Refresh([.. Nodes]);
     }
 
     public void ClearSearchFilter()
@@ -94,37 +85,41 @@ public partial class ParserSidebarPanel : UserControl
         var viewModel = (ParserFilterViewModel)DataContext;
         viewModel.SearchText = "";
         viewModel.SelectedFilterIndex = 0;
-        Refresh([.. Sections]);
+        Refresh([.. Nodes]);
     }
 
+    public void UpdateSectionTypeChoice(List<SectionNode> nodes)
+    {
+        var structures = new List<Element>();
+        foreach (var node in nodes)
+            if (node.Element != null && structures.All(el => el.GetType() != node.Element.GetType())) 
+                structures.Add(node.Element);
+
+        var viewModel = (ParserFilterViewModel) DataContext;
+        var oldIndex = viewModel.SelectedFilterIndex;
+        viewModel.AvailableSections = new ObservableCollection<Element>(structures);
+        viewModel.SelectedFilterIndex = oldIndex;
+    }
+    
     public void UpdateInformationBox(bool notifyUnparsing = false)
     {
         if (!CodeParserEnabled)
         {
-            Sections.Clear();
+            Nodes.Clear();
             CannotParseInfoText.IsVisible = false;
             return;
         }
 
         if (notifyUnparsing)
         {
-            Sections.Clear();
+            Nodes.Clear();
             return;
         }
 
-        if (Sections.Count == 0)
+        if (Nodes.Count == 0)
         {
             CannotParseInfo.IsVisible = true;
             CannotParseInfoText.Text = Translation.Get("CodeParserNoSections");
-            return;
-        }
-
-        var parser = Sections[0].Parser;
-        if (!parser.IsValid())
-        {
-            Sections.Clear();
-            CannotParseInfo.IsVisible = true;
-            CannotParseInfoText.Text = Translation.Get("CodeParserBadFormat");
             return;
         }
 
@@ -141,4 +136,63 @@ public partial class ParserSidebarPanel : UserControl
 
         public override int DesiredWidth { get; } = 350;
     }
+    
+}
+
+public record ParserSectionNode(SectionNode SectionNode, FileParser Parser)
+{
+    public string Name => SectionNode.Key;
+    /*public IconSource Icon => Type switch
+    {
+        ParserSidebarPanel.StructureType.Command => SkEditorAPI.Core.GetApplicationResource("MagicWandIcon") as IconSource,
+        ParserSidebarPanel.StructureType.Event => SkEditorAPI.Core.GetApplicationResource("LightingIcon") as IconSource,
+        ParserSidebarPanel.StructureType.Function => SkEditorAPI.Core.GetApplicationResource("FunctionIcon") as IconSource,
+        ParserSidebarPanel.StructureType.Options => new SymbolIconSource() { Symbol = Symbol.Setting, FontSize = 20 },
+        _ => SkEditorAPI.Core.GetApplicationResource("CodeIcon") as IconSource
+    };*/
+
+    public string LinesDisplay => $"From {SectionNode.Line} to {SectionNode.FindLastNode().Line}";
+
+    #region Navigation
+
+    public RelayCommand NavigateToCommand => new(NavigateTo);
+    public void NavigateTo()
+    {
+        var editor = Parser.Editor;
+        editor.ScrollTo(SectionNode.Line + 1, 0);
+        editor.CaretOffset = editor.Document.GetOffset(SectionNode.Line, 0);
+        editor.Focus();
+    }
+
+    #endregion
+    
+    #region Section Highlighting
+
+    public LineColorizer Colorizer = new(SectionNode.Line,
+        SectionNode.FindLastNode().Line);
+        
+    public RelayCommand OnSectionPointerEntered => new(HighlightSection);
+    public RelayCommand OnSectionPointerExited => new(RemoveHighlight);
+        
+    public void HighlightSection() => Parser.Editor.TextArea.TextView.LineTransformers.Add(Colorizer);
+
+    public void RemoveHighlight() => Parser.Editor.TextArea.TextView.LineTransformers.Remove(Colorizer);
+        
+    public class LineColorizer(int from, int to) : DocumentColorizingTransformer
+    {
+        protected override void ColorizeLine(DocumentLine line)
+        {
+            if (!line.IsDeleted && line.LineNumber >= from && line.LineNumber <= to)
+            {
+                ChangeLinePart(line.Offset, line.EndOffset, ApplyChanges);
+            }
+        }
+
+        private void ApplyChanges(VisualLineElement element)
+        {
+            element.BackgroundBrush = ThemeEditor.CurrentTheme.SelectionColor;
+        }
+    }
+
+    #endregion
 }

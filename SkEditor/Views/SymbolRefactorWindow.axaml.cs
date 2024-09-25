@@ -9,16 +9,17 @@ namespace SkEditor.Views;
 
 public partial class SymbolRefactorWindow : AppWindow
 {
-    public INameableCodeElement Element { get; }
-    public SymbolRefactorWindow(INameableCodeElement element)
+    public NameableReference Reference { get; }
+    public SymbolRefactorWindow(NameableReference reference)
     {
         InitializeComponent();
+        Reference = reference;
         Focusable = true;
 
-        Element = element;
-
-        RenameText.Text = Translation.Get("RefactorWindowRefactorBoxName", element.GetNameDisplay());
-        NameBox.Text = element.Name;
+        RenameText.Text = Translation.Get("RefactorWindowRefactorBoxName",
+            Reference.Name);
+        NameBox.Text = Reference.Name;
+        
         RefactorButton.Command = new RelayCommand(Refactor);
 
         KeyDown += (_, e) =>
@@ -29,7 +30,7 @@ public partial class SymbolRefactorWindow : AppWindow
 
     private void Refactor()
     {
-        Element.Rename(NameBox.Text);
+        Reference.RenameAction((Reference, NameBox.Text));
         Close();
 
         AddonLoader.GetCoreAddon().ParserPanel.Panel.ParseCurrentFile();

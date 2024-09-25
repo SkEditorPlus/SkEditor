@@ -15,6 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using SkEditor.Utilities.InternalAPI;
 
 namespace SkEditor.Utilities.Editor;
 public partial class TextEditorEventHandler
@@ -103,7 +104,7 @@ public partial class TextEditorEventHandler
 
         if (SkEditorAPI.Core.GetAppConfig().EnableRealtimeCodeParser)
         {
-            await Dispatcher.UIThread.InvokeAsync(() => openedFile?.Parser.Parse());
+            await Dispatcher.UIThread.InvokeAsync(() => (openedFile["Parser"] as FileParser)?.Parse());
         }
 
         openedFile.IsSaved = false;

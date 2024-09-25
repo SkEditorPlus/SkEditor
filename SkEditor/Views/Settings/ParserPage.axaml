@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+			 xmlns:controls="using:SkEditor.Controls"
+             xmlns:utilities="clr-namespace:SkEditor.Utilities"
+             xmlns:fluent="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
+             xmlns:viewModels="clr-namespace:SkEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800"
+             x:DataType="viewModels:ParserSettingsViewModel"
+             x:Class="SkEditor.Views.Settings.ParserPage">
+
+	<Grid RowDefinitions="auto,*" Margin="20, 10, 20, 20">
+		<controls:SettingsTitle Name="Title" Title="{DynamicResource SettingsParserTitle}" Grid.Row="0"/>
+		<ScrollViewer Grid.Row="1">
+			<StackPanel Spacing="8">
+				<ui:InfoBar IsClosable="False" IsOpen="True" Severity="Warning" Message="{DynamicResource SettingsParserWarning}" />
+				
+				<ui:SettingsExpander Header="{DynamicResource SettingsParserIgnoredWarnings}" Description="{DynamicResource SettingsParserIgnoredWarningsDescription}" >
+					<ui:SettingsExpander.IconSource>
+						<fluent:SymbolIconSource Symbol="BuildingFactory" />
+					</ui:SettingsExpander.IconSource>
+					<ui:SettingsExpander.Items>
+						<Grid RowDefinitions="*,Auto" HorizontalAlignment="Stretch">
+							<ScrollViewer Grid.Row="0">
+								<ItemsRepeater x:DataType="viewModels:ParserSettingsViewModel" ItemsSource="{Binding Warnings}">
+									<ItemsRepeater.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+												<TextBlock Grid.Column="0" Text="{Binding Warning.Message}" />
+												<ToggleSwitch Grid.Column="1" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+												              OnContent="{DynamicResource SettingsParserWarningEnabled}"
+												              OffContent="{DynamicResource SettingsParserWarningDisabled}"/>
+											</Grid>
+										</DataTemplate>
+									</ItemsRepeater.ItemTemplate>
+								</ItemsRepeater>
+							</ScrollViewer>
+						</Grid>
+					</ui:SettingsExpander.Items>
+				</ui:SettingsExpander>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

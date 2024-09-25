@@ -15,6 +15,7 @@
 	<system:String x:Key="WindowTitleMarketplace">Marketplace</system:String>
 	<system:String x:Key="WindowTitleElementRename">Rename</system:String>
 	<system:String x:Key="WindowTitleElementCreate">Create</system:String>
+	<system:String x:Key="WindowTitleEditColor">Edit color</system:String>
 	<system:String x:Key="WindowTitleColorSelector">Color selector</system:String>
 
 	<!-- Menu Headers -->
@@ -263,6 +264,16 @@
 	<system:String x:Key="SettingsHomeAbout">About</system:String>
 	<system:String x:Key="SettingsHomeFileTypes">File Types</system:String>
 	<system:String x:Key="SettingsHomeFileTypesDescription">Manage file types and their associations.</system:String>
+
+	<!-- Parser Settings -->
+	<system:String x:Key="SettingsParserTitle">Parser</system:String>
+	<system:String x:Key="SettingsParserDescription">Settings for the CODE parser.</system:String>
+	<system:String x:Key="SettingsParserWarning">This page is for the CODE parser, and not the "Analyzer". For Analyzer settings, find them in the "Addons" section.</system:String>
+	<system:String x:Key="SettingsParserIgnoredWarnings">Ignored warnings</system:String>
+	<system:String x:Key="SettingsParserIgnoredWarningsDescription">Choose which warnings should be ignored by the parser.</system:String>
+	<system:String x:Key="SettingsParserIgnoredWarningsTip">Click on the warning icon on the left of a warned line to directly ignore it.</system:String>
+	<system:String x:Key="SettingsParserWarningEnabled">Ignored</system:String>
+	<system:String x:Key="SettingsParserWarningDisabled">Not ignored</system:String>
 
 	<!-- General Settings -->
 	<system:String x:Key="SettingsGeneralTitle">General</system:String>

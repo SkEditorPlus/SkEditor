@@ -1,9 +1,11 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia.Controls;
 using AvaloniaEdit;
 using FluentAvalonia.UI.Controls;
 using SkEditor.API;
 using SkEditor.Utilities.Parser;
 using System.Collections.Generic;
+using SkEditor.Utilities.InternalAPI;
 
 namespace SkEditor.Utilities.Files;
 
@@ -12,7 +14,6 @@ public class OpenedFile
 
     #region Text Files Properties
 
-    public CodeParser? Parser => this["Parser"] as CodeParser;
     public TextEditor? Editor { get; set; }
     public string? Path { get; set; }
     public bool IsNewFile { get; set; } = false;
@@ -42,6 +43,9 @@ public class OpenedFile
     public TabViewItem TabViewItem { get; set; }
 
     #region Accessors
+    
+    [Obsolete("Use indexers instead.")]
+    public FileParser? FileParser => this["Parser"] as FileParser;
 
     public bool IsEditor => Editor != null;
     public string? Name => Path == null ? CustomName : System.IO.Path.GetFileName(Path);

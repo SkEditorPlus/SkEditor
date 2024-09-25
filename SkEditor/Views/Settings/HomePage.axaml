@@ -28,6 +28,14 @@
 				<ui:SettingsExpander Name="ConnectionsItem" Header="{DynamicResource SettingsHomeConnections}" IconSource="{StaticResource ConnectionsIcon}"
 				    Description="{DynamicResource SettingsHomeConnectionsDescription}"
 				    IsClickEnabled="True" />
+				
+				<ui:SettingsExpander Name="ParserItem" Header="{DynamicResource SettingsParserTitle}"
+				    Description="{DynamicResource SettingsParserDescription}"
+				    IsClickEnabled="True">
+					<ui:SettingsExpander.IconSource>
+						<fluent:SymbolIconSource Symbol="BuildingFactory" />
+					</ui:SettingsExpander.IconSource>
+				</ui:SettingsExpander>
 
 				<ui:SettingsExpander Name="AddonsItem" Header="{DynamicResource SettingsHomeAddons}" IconSource="{StaticResource AddonIcon}"
 					Description="{DynamicResource SettingsHomeAddonsDescription}"

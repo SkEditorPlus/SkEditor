@@ -13,7 +13,7 @@ namespace SkEditor.Views.Generators.Gui;
 /// </summary>
 public static class ColoredTextHandler
 {
-    private static readonly Dictionary<string, object> TextFormats = new()
+    public static readonly Dictionary<string, object> TextFormats = new()
     {
         { "0", Color.FromRgb(0, 0, 0) },
         { "1", Color.FromRgb(0, 0, 170) },
@@ -37,7 +37,32 @@ public static class ColoredTextHandler
         { "m", TextDecorations.Strikethrough },
         { "r", Color.FromRgb(255, 255, 255) }
     };
-
+    
+    public static readonly Dictionary<string, object> TagFormats = new()
+    {
+        { "black", Color.FromRgb(0, 0, 0) },
+        { "dark_blue", Color.FromRgb(0, 0, 170) },
+        { "dark_green", Color.FromRgb(0, 170, 0) },
+        { "dark_aqua", Color.FromRgb(0, 170, 170) },
+        { "dark_red", Color.FromRgb(170, 0, 0) },
+        { "dark_purple", Color.FromRgb(170, 0, 170) },
+        { "gold", Color.FromRgb(255, 170, 0) },
+        { "gray", Color.FromRgb(170, 170, 170) },
+        { "dark_gray", Color.FromRgb(85, 85, 85) },
+        { "blue", Color.FromRgb(85, 85, 255) },
+        { "green", Color.FromRgb(85, 255, 85) },
+        { "aqua", Color.FromRgb(85, 255, 255) },
+        { "red", Color.FromRgb(255, 85, 85) },
+        { "light_purple", Color.FromRgb(255, 85, 255) },
+        { "yellow", Color.FromRgb(255, 255, 85) },
+        { "white", Color.FromRgb(255, 255, 255) },
+        { "bold", FontWeight.Bold },
+        { "italic", FontStyle.Italic },
+        { "underline", TextDecorations.Underline },
+        { "strikethrough", TextDecorations.Strikethrough },
+        { "reset", Color.FromRgb(255, 255, 255) }
+    };
+    
     private struct FormattedText
     {
         public string Text { get; set; }

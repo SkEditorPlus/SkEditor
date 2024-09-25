@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:parser="clr-namespace:SkEditor.Utilities.Parser"
-             xmlns:viewModels="clr-namespace:SkEditor.Utilities.Parser.ViewModels"
+             xmlns:parser1="clr-namespace:SkEditor.Parser"
+             xmlns:sidebar="clr-namespace:SkEditor.Controls.Sidebar"
              x:Class="SkEditor.Controls.Sidebar.ParserSidebarPanel"
 			 Margin="10,0,0,0">
     
@@ -31,23 +32,27 @@
                 <Button Name="EnableParser" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="accent" Content="{DynamicResource ConfirmButton}"/>
             </StackPanel>
             <Grid Grid.Row="3" ColumnDefinitions="*,*,auto" Margin="5">
-                <TextBox Grid.Column="0" x:DataType="viewModels:ParserFilterViewModel" 
+                <TextBox Grid.Column="0" x:DataType="sidebar:ParserFilterViewModel" 
                          Watermark="{DynamicResource CodeParserSearch}" Margin="0 0 0 0"
                          Text="{Binding SearchText}"
                          Name="SearchBox"
                          ToolTip.Tip="{DynamicResource CodeParserFilterName}"/>
 				
-                <ComboBox Margin="5 0" Grid.Column="1" x:DataType="viewModels:ParserFilterViewModel" 
+                <ComboBox Margin="5 0" Grid.Column="1" x:DataType="sidebar:ParserFilterViewModel" 
                           SelectedIndex="{Binding SelectedFilterIndex}"
+                          ItemsSource="{Binding AvailableSections}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                           Name="TypeFilterBox"
                           ToolTip.Tip="{DynamicResource CodeParserFilterType}">
-                    <ComboBoxItem Content="{DynamicResource CodeParserFilterTypeAny}" Tag="-" />
-                    <ComboBoxItem Content="{DynamicResource CodeParserFilterTypeFunctions}" Tag="functions" />
-                    <ComboBoxItem Content="{DynamicResource CodeParserFilterTypeEvents}" Tag="events" />
-                    <ComboBoxItem Content="{DynamicResource CodeParserFilterTypeOptions}" Tag="options" />
-                    <ComboBoxItem Content="{DynamicResource CodeParserFilterTypeCommands}" Tag="commands" />
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <ui:IconSourceElement IconSource="{Binding IconSource}" />
+                                <TextBlock Text="{Binding DisplayString}" /> 
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Button Grid.Column="2" Height="30" Width="30" Padding="0" Name="ClearSearch"
                         ToolTip.Tip="{DynamicResource CodeParserClearFilters}">
@@ -57,11 +62,11 @@
             <ScrollViewer Name="ScrollViewer" Grid.Row="4" HorizontalAlignment="Stretch"
 						  VerticalAlignment="Stretch" VerticalContentAlignment="Top"
 						  HorizontalContentAlignment="Center" Margin="5,0">
-                <ItemsRepeater Name="ItemsRepeater">
+                <ItemsRepeater x:DataType="sidebar:ParserFilterViewModel" ItemsSource="{Binding FilteredSections}">
                     <ItemsRepeater.ItemTemplate>
-                        <DataTemplate DataType="parser:CodeSection">
-                            <Expander Margin="0,5">
-                                <Interaction.Behaviors>
+                        <DataTemplate>
+                            <ui:SettingsExpander IsClickEnabled="True" Margin="5" P>
+                                <!-- <Interaction.Behaviors>
                                     <EventTriggerBehavior EventName="PointerEntered">
                                         <EventTriggerBehavior.Actions>
                                             <InvokeCommandAction Command="{Binding OnSectionPointerEntered}" />
@@ -72,108 +77,14 @@
                                             <InvokeCommandAction Command="{Binding OnSectionPointerExited}" />
                                         </EventTriggerBehavior.Actions>
                                     </EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                                <Expander.Header>
+                                </Interaction.Behaviors> -->
+                                <ui:SettingsExpander.Header>
                                     <StackPanel Orientation="Horizontal">
-                                        <ui:IconSourceElement Width="20" Height="20" IconSource="{Binding Icon}" />
-                                        <TextBlock Text="{Binding Name}" Margin="10,0,0,0" FontWeight="DemiBold"/>
+                                        <ui:IconSourceElement Width="20" Height="20" IconSource="{Binding  Element.IconSource}" />
+                                        <TextBlock Text="{Binding Key}" Margin="10,0,0,0" FontWeight="DemiBold"/>
                                     </StackPanel>
-                                </Expander.Header>
-                                <StackPanel Spacing="10">
-                                    <Grid ColumnDefinitions="*,*">
-                                        <TextBlock VerticalAlignment="Center" Text="{Binding LinesDisplay}" />
-                                        <Button Grid.Column="1" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"
-                                                Content="{DynamicResource CodeParserNavigate}"
-                                                Name="NavigateToButton" Command="{Binding NavigateToCommand}" />
-                                    </Grid>
-                                    <Separator Margin="0,3"/>
-                                    
-                                    <!-- Function Argument -->
-                                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                Spacing="10" IsVisible="{Binding HasFunctionArguments}">
-                                        <TextBlock FontSize="18" TextAlignment="Left" HorizontalAlignment="Center" FontWeight="DemiBold" Text="{Binding FunctionArgumentTitle}"/>
-                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5,8">
-                                            <ItemsControl ItemsSource="{Binding FunctionArguments}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid ColumnDefinitions="*,*,Auto" Margin="0,2">
-                                                            <TextBlock TextAlignment="Left" FontWeight="DemiBold" Text="{Binding Name}"/>
-                                                            <TextBlock Grid.Column="1" TextAlignment="Left" Text="{Binding Type}"/>
-                                                            <Button Height="28" Width="28" Grid.Column="2" Command="{Binding Rename}" Padding="0" ToolTip.Tip="{DynamicResource CodeParserRename}">
-                                                                <ui:SymbolIcon Symbol="Rename" FontSize="20" Margin="0" />
-                                                            </Button>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    
-                                    <!-- Variables -->
-                                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                Spacing="10" IsVisible="{Binding HasAnyVariables}">
-                                        <TextBlock FontSize="18" TextAlignment="Left" HorizontalAlignment="Center" FontWeight="DemiBold" Text="{Binding VariableTitle}"/>
-                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5,8">
-                                            <ItemsControl ItemsSource="{Binding UniqueVariables}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid ColumnDefinitions="*,Auto" Margin="0,2">
-                                                            <TextBlock TextAlignment="Left" FontStyle="{Binding Style}" Text="{Binding Name}"/>
-                                                            <Button Height="28" Width="28" Grid.Column="1" Command="{Binding Rename}" Padding="0" ToolTip.Tip="{DynamicResource CodeParserRename}">
-                                                                <ui:SymbolIcon Symbol="Rename" FontSize="20" Margin="0" />
-                                                            </Button>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    
-                                    <!-- Options Reference -->
-                                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                Spacing="10" IsVisible="{Binding HasAnyOptionReferences}">
-                                        <TextBlock FontSize="18" TextAlignment="Left" HorizontalAlignment="Center" FontWeight="DemiBold" Text="{Binding OptionReferenceTitle}"/>
-                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5 8">
-                                            <ItemsControl ItemsSource="{Binding UniqueOptionReferences}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid ColumnDefinitions="*,Auto,Auto" Margin="0 2">
-                                                            <TextBlock TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Name}"/>
-                                                            <Button Height="28" Width="28" Grid.Column="1" Command="{Binding NavigateToDefinition}" Padding="0" ToolTip.Tip="{DynamicResource CodeParserNavigateToDefinition}">
-                                                                <ui:SymbolIcon Symbol="Go" FontSize="20" Margin="0" />
-                                                            </Button>
-                                                            <Button Height="28" Width="28" Grid.Column="2" Command="{Binding Rename}" Padding="0" Margin="4 0 0 0" ToolTip.Tip="{DynamicResource CodeParserRename}">
-                                                                <ui:SymbolIcon Symbol="Rename" FontSize="20" Margin="0" />
-                                                            </Button>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    
-                                    <!-- Options Definition -->
-                                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                Spacing="10" IsVisible="{Binding HasOptionDefinition}">
-                                        <TextBlock FontSize="18" TextAlignment="Left" HorizontalAlignment="Center" FontWeight="DemiBold" Text="{Binding OptionTitle}"/>
-                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5 8">
-                                            <ItemsControl ItemsSource="{Binding Options}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid ColumnDefinitions="*,Auto" Margin="0 2">
-                                                            <TextBlock TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Name}"/>
-                                                            <Button Height="28" Width="28" Grid.Column="2" Command="{Binding Rename}" Padding="0" ToolTip.Tip="{DynamicResource CodeParserRename}">
-                                                                <ui:SymbolIcon Symbol="Rename" FontSize="20" Margin="0" />
-                                                            </Button>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    
-                                </StackPanel >
-                            </Expander>
+                                </ui:SettingsExpander.Header>
+                            </ui:SettingsExpander>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>

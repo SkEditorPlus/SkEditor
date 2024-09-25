@@ -7,6 +7,8 @@ using SkEditor.Controls;
 using SkEditor.Utilities;
 using SkEditor.Utilities.Editor;
 using SkEditor.Utilities.Files;
+using SkEditor.Utilities.InternalAPI;
+using SkEditor.Utilities.InternalAPI;
 using SkEditor.Utilities.Parser;
 using SkEditor.Utilities.Syntax;
 using SkEditor.ViewModels;
@@ -179,12 +181,14 @@ public class Files : IFiles
             IsSaved = !string.IsNullOrEmpty(path),
             IsNewFile = path == null,
         };
-
+        
         Icon.SetIcon(openedFile);
 
         // Custom Data
-        openedFile["Parser"] = new CodeParser(editor);
+        openedFile["Parser"] = new FileParser(editor);
         openedFile["Margin"] = new EditorMargin(openedFile);
+        if (tabItem.Content is TextEditor textEditor)
+            openedFile["Parser"] = new FileParser(textEditor);
 
         RemoveWelcomeTab();
         GetOpenedFiles().Add(openedFile);

@@ -1,0 +1,27 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:SpacedGridControl.Avalonia;assembly=SpacedGridControl.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="550"
+        x:Class="SkEditor.Views.EditColorWindow"
+        Icon="/Assets/SkEditor.ico"
+        Title="{DynamicResource WindowTitleEditColor}" Height="530" Width="350" CanResize="False" WindowStartupLocation="CenterOwner" 
+        Theme="{StaticResource SmallWindowTheme}">
+    <avalonia:SpacedGrid RowDefinitions="*,Auto,Auto" ColumnDefinitions="*,*"
+                         RowSpacing="5" ColumnSpacing="5"
+                         Margin="10">
+        <ColorView Name="Picker" Grid.ColumnSpan="2"/>
+        
+        <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center">Change as ...</Label>
+        <ComboBox Grid.Row="1" Grid.Column="1" Name="ColorTypeComboBox" SelectedIndex="0" HorizontalAlignment="Stretch">
+            <ComboBoxItem Tag="hex">Hex Code</ComboBoxItem>
+                
+            <ComboBoxItem Tag="tag">Tag</ComboBoxItem>
+            <ComboBoxItem Tag="minecraft">Minecraft Code</ComboBoxItem>
+        </ComboBox>
+        
+        <Button Grid.Row="2" Grid.Column="0" Name="ChangeButton" HorizontalAlignment="Stretch" Classes="accent">Change</Button>
+        <Button Grid.Row="2" Grid.Column="1" Name="CancelButton" HorizontalAlignment="Stretch">Cancel</Button>
+    </avalonia:SpacedGrid>
+</Window>

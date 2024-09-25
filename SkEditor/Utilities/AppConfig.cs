@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-using SkEditor.API;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using SkEditor.API;
 
 namespace SkEditor.Utilities;
 
@@ -34,6 +34,7 @@ public partial class AppConfig : ObservableObject
     [ObservableProperty] private bool _checkForChanges = false;
     [ObservableProperty] private bool _isProjectSingleClickEnabled = true;
     [ObservableProperty] private bool _isDevModeEnabled = false;
+    [ObservableProperty] private Dictionary<string, bool> _ignoredParserWarnings = [];
 
     /// <summary>
     /// Represent the width of panels via their ID (<see cref="Registries.SidebarPanels"/>

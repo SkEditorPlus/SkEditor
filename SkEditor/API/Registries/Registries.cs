@@ -1,4 +1,7 @@
 ﻿using SkEditor.Utilities;
+using System;
+using System.Collections.Generic;
+using SkEditor.Parser.Elements;
 
 namespace SkEditor.API;
 
@@ -15,6 +18,10 @@ public static class Registries
     public static readonly Registry<MarginIconData> MarginIcons = new();
     public static readonly Registry<FileTypeData> FileTypes = new();
 
+    
+    public static readonly Registry<ParserElementData> ParserElements = new(); 
+    public static readonly Registry<ParserWarning> ParserWarnings = new();
+    
     public static void Unload(IAddon addon)
     {
         Connections.Unload(addon);
@@ -23,5 +30,8 @@ public static class Registries
         WelcomeEntries.Unload(addon);
         MarginIcons.Unload(addon);
         FileTypes.Unload(addon);
+        
+        ParserElements.Unload(addon);
+        ParserWarnings.Unload(addon);
     }
 }
