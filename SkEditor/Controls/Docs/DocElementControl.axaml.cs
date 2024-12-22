@@ -430,7 +430,8 @@ public partial class DocElementControl : UserControl
                     textEditor.FontFamily = new FontFamily(SkEditorAPI.Core.GetAppConfig().Font);
                 }
 
-                textEditor.SyntaxHighlighting = SyntaxLoader.GetCurrentSkriptHighlighting();
+                // TODO NOTRO: Set the syntax of this editor using the new textmate way :D
+                //textEditor.SyntaxHighlighting = SyntaxLoader.GetCurrentSkriptHighlighting();
                 stackPanel.Children.Add(textEditor);
 
                 ((StackPanel)ExamplesEntry.Content).Children.Add(stackPanel);

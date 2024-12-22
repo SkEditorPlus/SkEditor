@@ -141,5 +141,4 @@ public class EditorMargin : AbstractMargin
         var args = new ClickedArgs(File, line);
         HoveredIcon.MouseClickFunc(args);
     }
-
 }

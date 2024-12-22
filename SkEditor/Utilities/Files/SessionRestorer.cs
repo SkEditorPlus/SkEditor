@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
+using SkEditor.Utilities.Syntax;
 
 namespace SkEditor.Utilities.Files;
 public static class SessionRestorer

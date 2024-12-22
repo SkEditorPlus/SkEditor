@@ -110,6 +110,24 @@ public partial class TextEditorEventHandler
         openedFile.IsNewFile = false;
     }
 
+    public static void CheckForSkDoc(object? sender, TextInputEventArgs e)
+    {
+        string text = e.Text;
+        TextEditor? textEditor = SkEditorAPI.Files.GetCurrentOpenedFile().Editor;
+        if (textEditor == null) return;
+
+        int offset = textEditor.CaretOffset;
+        SimpleSegment segment = TextEditorUtilities.GetSegmentBeforeOffset(offset, textEditor.Document);
+        if (segment == SimpleSegment.Invalid) return;
+
+        string segmentText = textEditor.Document.GetText(segment);
+
+        if (segmentText == "###")
+        {
+            //textEditor.Document.Insert(offset, "
+        }
+    }
+
     public static void DoAutoIndent(object? sender, TextInputEventArgs e)
     {
         if (!SkEditorAPI.Core.GetAppConfig().IsAutoIndentEnabled) return;

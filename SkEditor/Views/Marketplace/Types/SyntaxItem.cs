@@ -22,57 +22,57 @@ public class SyntaxItem : MarketplaceItem
 
     public async override void Install()
     {
-        string baseLocalSyntaxPath = Path.Combine(AppConfig.AppDataFolderPath, FolderName);
+        //string baseLocalSyntaxPath = Path.Combine(AppConfig.AppDataFolderPath, FolderName);
 
-        List<FileSyntax> installedSyntaxes = [];
-        bool allInstalled = true;
-        foreach (string folder in ItemSyntaxFolders)
-        {
-            var folderName = folder.Split('/').Last();
-            string localSyntaxPath = Path.Combine(baseLocalSyntaxPath,
-                folderName);
-            Directory.CreateDirectory(localSyntaxPath);
-            allInstalled = allInstalled && await Install(folder + "/config.json", Path.Combine(localSyntaxPath, "config.json"));
-            allInstalled = allInstalled && await Install(folder + "/syntax.xshd", Path.Combine(localSyntaxPath, "syntax.xshd"));
+        //List<FileSyntax> installedSyntaxes = [];
+        //bool allInstalled = true;
+        //foreach (string folder in ItemSyntaxFolders)
+        //{
+        //    var folderName = folder.Split('/').Last();
+        //    string localSyntaxPath = Path.Combine(baseLocalSyntaxPath,
+        //        folderName);
+        //    Directory.CreateDirectory(localSyntaxPath);
+        //    allInstalled = allInstalled && await Install(folder + "/config.json", Path.Combine(localSyntaxPath, "config.json"));
+        //    allInstalled = allInstalled && await Install(folder + "/syntax.xshd", Path.Combine(localSyntaxPath, "syntax.xshd"));
 
-            if (!allInstalled)
-                break;
+        //    if (!allInstalled)
+        //        break;
 
-            try
-            {
-                installedSyntaxes.Add(await SyntaxLoader.LoadSyntax(localSyntaxPath));
-            }
-            catch (Exception)
-            {
-                SkEditorAPI.Logs.Error($"Failed to load syntax {folderName}!", true);
-                return;
-            }
-        }
+        //    try
+        //    {
+        //        installedSyntaxes.Add(await SyntaxLoader.LoadSyntax(localSyntaxPath));
+        //    }
+        //    catch (Exception)
+        //    {
+        //        SkEditorAPI.Logs.Error($"Failed to load syntax {folderName}!", true);
+        //        return;
+        //    }
+        //}
 
-        if (!allInstalled)
-        {
-            await SkEditorAPI.Windows.ShowError(Translation.Get("MarketplaceInstallFailed", ItemName));
-            return;
-        }
+        //if (!allInstalled)
+        //{
+        //    await SkEditorAPI.Windows.ShowError(Translation.Get("MarketplaceInstallFailed", ItemName));
+        //    return;
+        //}
 
-        string message = Translation.Get("MarketplaceInstallSuccess", ItemName);
-        message += "\n" + Translation.Get("MarketplaceInstallEnableNow");
+        //string message = Translation.Get("MarketplaceInstallSuccess", ItemName);
+        //message += "\n" + Translation.Get("MarketplaceInstallEnableNow");
 
-        ContentDialogResult result = await SkEditorAPI.Windows.ShowDialog("Success", message,
-            primaryButtonText: "MarketplaceEnableNow", cancelButtonText: "Okay");
+        //ContentDialogResult result = await SkEditorAPI.Windows.ShowDialog("Success", message,
+        //    primaryButtonText: "MarketplaceEnableNow", cancelButtonText: "Okay");
 
-        if (result == ContentDialogResult.Primary)
-        {
-            foreach (var syntax in installedSyntaxes)
-            {
-                SyntaxLoader.SelectSyntax(syntax);
-            }
+        //if (result == ContentDialogResult.Primary)
+        //{
+        //    foreach (var syntax in installedSyntaxes)
+        //    {
+        //        SyntaxLoader.SelectSyntax(syntax);
+        //    }
 
-            SyntaxLoader.RefreshAllOpenedEditors();
-        }
+        //    SyntaxLoader.RefreshAllOpenedEditors();
+        //}
 
-        MarketplaceWindow.Instance.HideAllButtons();
-        MarketplaceWindow.Instance.ItemView.UninstallButton.IsVisible = true;
+        //MarketplaceWindow.Instance.HideAllButtons();
+        //MarketplaceWindow.Instance.ItemView.UninstallButton.IsVisible = true;
     }
 
     private async Task<bool> Install(string url, string filePath)
@@ -98,24 +98,24 @@ public class SyntaxItem : MarketplaceItem
 
     public override async void Uninstall()
     {
-        List<string> folders = ItemSyntaxFolders.ToList();
-        var syntaxFolder = Path.Combine(AppConfig.AppDataFolderPath, FolderName);
-        foreach (string folder in folders)
-        {
-            var folderName = folder.Split('/').Last();
-            string localSyntaxPath = Path.Combine(syntaxFolder,
-                folderName);
+        //List<string> folders = ItemSyntaxFolders.ToList();
+        //var syntaxFolder = Path.Combine(AppConfig.AppDataFolderPath, FolderName);
+        //foreach (string folder in folders)
+        //{
+        //    var folderName = folder.Split('/').Last();
+        //    string localSyntaxPath = Path.Combine(syntaxFolder,
+        //        folderName);
 
-            await SyntaxLoader.UnloadSyntax(localSyntaxPath);
-            Directory.Delete(localSyntaxPath, true);
-        }
-        SyntaxLoader.CheckConfiguredFileSyntaxes();
-        SyntaxLoader.RefreshAllOpenedEditors();
+        //    await SyntaxLoader.UnloadSyntax(localSyntaxPath);
+        //    Directory.Delete(localSyntaxPath, true);
+        //}
+        //SyntaxLoader.CheckConfiguredFileSyntaxes();
+        //SyntaxLoader.RefreshAllOpenedEditors();
 
-        MarketplaceWindow.Instance.HideAllButtons();
-        MarketplaceWindow.Instance.ItemView.InstallButton.IsVisible = true;
+        //MarketplaceWindow.Instance.HideAllButtons();
+        //MarketplaceWindow.Instance.ItemView.InstallButton.IsVisible = true;
 
-        await SkEditorAPI.Windows.ShowDialog("Success", Translation.Get("MarketplaceUninstallSuccess", ItemName), primaryButtonText: "Okay");
+        //await SkEditorAPI.Windows.ShowDialog("Success", Translation.Get("MarketplaceUninstallSuccess", ItemName), primaryButtonText: "Okay");
     }
 
     public override bool IsInstalled()

@@ -24,8 +24,14 @@ public partial class CodeSection
         {
             int line = StartingLineIndex + Lines.Count;
             DocumentLine documentLine = Parser.Editor.Document.GetLineByNumber(line);
-            if (string.IsNullOrWhiteSpace(Parser.Editor.Document.GetText(documentLine)))
-                return line - 1;
+            string text = Parser.Editor.Document.GetText(documentLine);
+            while (string.IsNullOrWhiteSpace(text) || text.Trim().StartsWith('#'))
+            {
+                line--;
+                documentLine = Parser.Editor.Document.GetLineByNumber(line);
+                text = Parser.Editor.Document.GetText(documentLine);
+            }
+
             return line;
         }
     }

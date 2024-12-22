@@ -18,7 +18,6 @@ public class TextEditorUtilities
         pos += textView.ScrollOffset;
 
         var line = textView.GetVisualLineFromVisualTop(pos.Y);
-
         if (line == null || line.TextLines == null) return SimpleSegment.Invalid;
 
         var visualColumn = line.GetVisualColumn(pos, textArea.Selection.EnableVirtualSpace);
@@ -34,6 +33,22 @@ public class TextEditorUtilities
         var wordEndOffset = line.GetRelativeOffset(wordEndVc) + relOffset;
 
         return new SimpleSegment(wordStartOffset, wordEndOffset - wordStartOffset);
+    }
+
+    public static int GetLineNumberFromMousePosition(Point pos, TextArea textArea)
+    {
+        var textView = textArea.TextView;
+        if (textView == null) return -1;
+
+        if (pos.Y < 0) pos = pos.WithY(0);
+        if (pos.Y > textView.Bounds.Height) pos = pos.WithY(textView.Bounds.Height);
+
+        pos += textView.ScrollOffset;
+
+        var line = textView.GetVisualLineFromVisualTop(pos.Y);
+        if (line == null) return -1;
+
+        return line.FirstDocumentLine.LineNumber;
     }
 
     public static SimpleSegment GetSegmentBeforeOffset(int offset, TextDocument document)

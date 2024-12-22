@@ -18,7 +18,8 @@ public partial class ExperimentsPage : UserControl
         new Experiment("Real-Time Code Parser", "Automatically parses your code with every change you make. Requires Code Parser experiment.", "EnableRealtimeCodeParser", "SearchIcon", Dependency: "EnableCodeParser"),
         new Experiment("Folding", "Folding code blocks. Requires Code Parser experiment.", "EnableFolding", "FoldingIcon", Dependency: "EnableCodeParser"),
         //new Experiment("Better pairing", "Experimental better version of auto pairing.", "EnableBetterPairing", "AutoPairingIcon"),
-        new Experiment("Session restoring", "Automatically saves your files and reopens it next time you start the app.", "EnableSessionRestoring", "SessionRestoringIcon")
+        new Experiment("Session restoring", "Automatically saves your files and reopens it next time you start the app.", "EnableSessionRestoring", "SessionRestoringIcon"),
+        new Experiment("SkDoc", "Function documentation on hover.", "EnableSkDoc", "SkDocIcon"),
     ];
 
     public ExperimentsPage()

@@ -4,7 +4,8 @@ using AvaloniaEdit;
 using CommunityToolkit.Mvvm.Input;
 using SkEditor.API;
 using SkEditor.Utilities;
-using SkEditor.Views.Settings.Personalization;
+using SkEditor.ViewModels;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SkEditor.Views.Settings;
@@ -22,7 +23,7 @@ public partial class PersonalizationPage : UserControl
     private void AssignCommands()
     {
         ThemePageButton.Command = new RelayCommand(() => SettingsWindow.NavigateToPage(typeof(ThemePage)));
-        SyntaxPageButton.Command = new RelayCommand(() => SettingsWindow.NavigateToPage(typeof(FileSyntaxes)));
+        //SyntaxPageButton.Command = new RelayCommand(() => SettingsWindow.NavigateToPage(typeof(FileSyntaxes)));
         Title.BackButton.Command = new RelayCommand(() => SettingsWindow.NavigateToPage(typeof(HomePage)));
 
         FontButton.Command = new RelayCommand(SelectFont);

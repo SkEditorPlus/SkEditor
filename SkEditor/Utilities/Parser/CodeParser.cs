@@ -92,6 +92,7 @@ public partial class CodeParser : INotifyPropertyChanged
         }
 
         if (SkEditorAPI.Core.GetAppConfig().EnableFolding) FoldingCreator.CreateFoldings(Editor, Sections);
+        if (SkEditorAPI.Core.GetAppConfig().EnableSkDoc) SkDocParser.Parse(this, Sections);
 
         ParserPanel.Refresh(Sections);
 

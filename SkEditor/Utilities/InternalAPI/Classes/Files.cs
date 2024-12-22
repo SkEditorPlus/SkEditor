@@ -189,7 +189,7 @@ public class Files : IFiles
         RemoveWelcomeTab();
         GetOpenedFiles().Add(openedFile);
         (GetTabView().TabItems as IList)?.Add(tabItem);
-        await SyntaxLoader.RefreshSyntaxAsync();
+        SyntaxLoader.Load(openedFile);
         return openedFile;
     }
 

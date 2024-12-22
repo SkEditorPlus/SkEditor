@@ -222,6 +222,11 @@ public class FileBuilder
             editor.TextArea.AddHandler(Avalonia.Input.InputElement.KeyDownEvent, CompletionHandler.OnKeyDown, handledEventsToo: true, routes: RoutingStrategies.Tunnel);
         }
 
+        if (SkEditorAPI.Core.GetAppConfig().EnableSkDoc)
+        {
+            editor.TextArea.TextView.PointerHover += TooltipHandler.OnPointerHover;
+        }
+
         editor.TextArea.TextPasting += TextEditorEventHandler.OnTextPasting;
 
         return editor;
